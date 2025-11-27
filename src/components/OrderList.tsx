@@ -13,10 +13,16 @@ export default function OrderList({ order, onIncrease, onDecrease, onRemove }: P
     <View style={{ padding: 10 }}>
       {order.map((item, index) => (
         <View key={`${item.id}-${index}`} style={styles.row}>
-          {/* NAME */}
-          <Text style={styles.name}>
-            {item.name} x{item.qty}
-          </Text>
+          
+          {/* NAME + UNIT PRICE */}
+          <View style={{ width: 140 }}>
+            <Text style={styles.name}>
+              {item.name} x{item.qty}
+            </Text>
+            <Text style={styles.unitPrice}>
+              {item.price} dt / unité
+            </Text>
+          </View>
 
           {/* BUTTONS */}
           <View style={styles.btnContainer}>
@@ -34,7 +40,7 @@ export default function OrderList({ order, onIncrease, onDecrease, onRemove }: P
             </TouchableOpacity>
           </View>
 
-          {/* PRICE */}
+          {/* TOTAL PRICE */}
           <Text style={styles.price}>{item.price * item.qty} dt</Text>
         </View>
       ))}
@@ -55,8 +61,14 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: "600",
-    width: 120,
   },
+
+  unitPrice: {
+    fontSize: 14,
+    color: "#777",
+    marginTop: 2,
+  },
+
   price: {
     fontSize: 18,
     fontWeight: "bold",

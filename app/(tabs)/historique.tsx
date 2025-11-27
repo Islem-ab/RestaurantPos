@@ -2,6 +2,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { deleteOrder, loadHistory, Order } from "../../src/storage/storage";
+import { toastInfo, toastSuccess } from "../../src/utils/toast"; // ✅ ADDED
 
 export default function Historique() {
   const router = useRouter();
@@ -9,7 +10,7 @@ export default function Historique() {
 
   async function refresh() {
     const data = await loadHistory();
-    setHistory([...data].reverse());   // 🔥 FIX : NEVER MUTATE STORAGE ARRAY
+    setHistory([...data].reverse());   // FIX : NEVER MUTATE storage array
   }
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function Historique() {
           </Text>
 
           <View style={{ flexDirection: "row", marginTop: 12, gap: 10 }}>
-            
+
             {/* DELETE */}
             <TouchableOpacity
               style={{
@@ -69,6 +70,7 @@ export default function Historique() {
               }}
               onPress={async () => {
                 await deleteOrder(order.id);
+                toastSuccess("Commande supprimée");
                 refresh();
               }}
             >
@@ -85,12 +87,16 @@ export default function Historique() {
                 padding: 12,
                 borderRadius: 8,
               }}
-              onPress={() => router.push(`/(tabs)/modifier/${order.id}`)}
+              onPress={() => {
+                toastInfo("Chargement de la commande…");
+                router.push(`/(tabs)/modifier/${order.id}`);
+              }}
             >
               <Text style={{ color: "#fff", fontWeight: "600", textAlign: "center" }}>
                 Modifier
               </Text>
             </TouchableOpacity>
+
           </View>
         </View>
       ))}

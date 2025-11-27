@@ -14,6 +14,8 @@ import MenuList from "../../../src/components/MenuList";
 import OrderFooter from "../../../src/components/OrderFooter";
 import OrderList from "../../../src/components/OrderList";
 
+import { toastInfo, toastSuccess } from "../../../src/utils/toast"; // ✅ ADDED
+
 export default function ModifierOrder() {
   const { id } = useLocalSearchParams();
   const orderId = Number(id);
@@ -35,7 +37,9 @@ export default function ModifierOrder() {
         return;
       }
 
-      setOrder([...existingOrder.items]); // copy — avoid reference mutation
+      toastSuccess("Commande chargée");  // ✅ Toast on load
+
+      setOrder([...existingOrder.items]);
     }
 
     load();
@@ -43,6 +47,8 @@ export default function ModifierOrder() {
 
   // ADD ITEM
   function addItem(item: MenuItem) {
+    toastSuccess(`${item.name} ajouté`);
+
     setOrder((prev) => {
       const found = prev.find((p) => p.id === item.id);
       if (found) {
@@ -67,6 +73,8 @@ export default function ModifierOrder() {
 
   // REMOVE ITEM
   function removeItem(id: number) {
+    const removed = order.find(i => i.id === id);
+    if (removed) toastInfo(`${removed.name} retiré`);
     setOrder((prev) => prev.filter((i) => i.id !== id));
   }
 
@@ -84,29 +92,23 @@ export default function ModifierOrder() {
 
     await updateOrder(updated);
 
-    Alert.alert("Succès", "Commande modifiée !");
+    toastSuccess("Commande modifiée !");
     router.push("/(tabs)/historique");
   }
 
   return (
     <View style={{ flex: 1 }}>
-      {/* 🔥 ONE SINGLE SCROLLVIEW — FIXES EVERYTHING */}
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }}>
-        
-        {/* LISTE DES MENUS */}
         <MenuList menus={menus} onSelect={addItem} />
 
-        {/* LISTE DES ITEMS COMMANDÉS */}
         <OrderList
           order={order}
           onIncrease={(id) => changeQty(id, 1)}
           onDecrease={(id) => changeQty(id, -1)}
           onRemove={removeItem}
         />
-
       </ScrollView>
 
-      {/* FOOTER */}
       <OrderFooter total={total} onCommander={saveChanges} />
     </View>
   );

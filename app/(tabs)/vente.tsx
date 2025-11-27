@@ -6,14 +6,17 @@ import MenuList from "../../src/components/MenuList";
 import OrderFooter from "../../src/components/OrderFooter";
 import OrderList from "../../src/components/OrderList";
 
+import { toastError, toastInfo, toastSuccess } from "../../src/utils/toast"; // ✅ ADDED
+
 export default function Vente() {
   const [menus, setMenus] = useState<MenuItem[]>([]);
   const [order, setOrder] = useState<OrderItem[]>([]);
 
   function removeItem(id: number) {
-  setOrder(prev => prev.filter(item => item.id !== id));
-}
-
+    const removed = order.find(i => i.id === id);
+    if (removed) toastInfo(`${removed.name} retiré`);
+    setOrder(prev => prev.filter(item => item.id !== id));
+  }
 
   useEffect(() => {
     loadMenus().then(setMenus);
@@ -21,6 +24,8 @@ export default function Vente() {
 
   // Add item
   function addItem(item: MenuItem) {
+    toastSuccess(`${item.name} ajouté au panier`);
+
     setOrder(prev => {
       const found = prev.find(p => p.id === item.id);
       if (found) {
@@ -46,21 +51,25 @@ export default function Vente() {
   const total = order.reduce((sum, i) => sum + i.price * i.qty, 0);
 
   async function commander() {
-    if (order.length === 0) return;
+    if (order.length === 0) {
+      toastError("Le panier est vide");
+      return;
+    }
+
     const newOrder = {
       id: Date.now(),
       date: new Date().toLocaleString(),
       items: order,
       total,
     };
+
     await saveOrder(newOrder);
+    toastSuccess("Commande enregistrée !");
     setOrder([]);
-    alert("Commande enregistrée !");
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
-
       {/* MENU SECTION (scrollable) */}
       <ScrollView style={{ flex: 1 }}>
         <MenuList menus={menus} onSelect={addItem} />
@@ -78,7 +87,6 @@ export default function Vente() {
 
       {/* FOOTER SECTION (fixed) */}
       <OrderFooter total={total} onCommander={commander} />
-
     </View>
   );
 }
