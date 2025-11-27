@@ -1,16 +1,21 @@
+import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
+
 import { loadMenus, MenuItem, OrderItem, saveOrder } from "../../src/storage/storage";
 
 import MenuList from "../../src/components/MenuList";
 import OrderFooter from "../../src/components/OrderFooter";
 import OrderList from "../../src/components/OrderList";
 
+import { toastSuccess } from "../../src/utils/toast"; // 🔥 toast utils
+
 export default function Vente() {
+  const router = useRouter();
+
   const [menus, setMenus] = useState<MenuItem[]>([]);
   const [order, setOrder] = useState<OrderItem[]>([]);
 
-  // 🔥 Scroll reference for order list
   const orderScrollRef = useRef<ScrollView>(null);
 
   function removeItem(id: number) {
@@ -21,7 +26,7 @@ export default function Vente() {
     loadMenus().then(setMenus);
   }, []);
 
-  // 🔥 Auto-scroll effect when order changes
+  // 🔥 Auto-scroll when order updates
   useEffect(() => {
     if (orderScrollRef.current) {
       setTimeout(() => {
@@ -56,30 +61,38 @@ export default function Vente() {
 
   const total = order.reduce((sum, i) => sum + i.price * i.qty, 0);
 
+  // 🔥 Save order and reload fresh sale
   async function commander() {
     if (order.length === 0) return;
+
     const newOrder = {
       id: Date.now(),
       date: new Date().toLocaleString(),
       items: order,
       total,
     };
+
     await saveOrder(newOrder);
-    setOrder([]);
-    alert("Commande enregistrée !");
+
+    toastSuccess("Commande enregistrée !");   // 🔥 Pretty notification
+
+    setOrder([]);                              // 🔥 Reset order
+
+    // 🔥 Reload Vente screen (fresh empty)
+    setMenus(await loadMenus());
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
 
-      {/* MENU SECTION (scrollable) */}
+      {/* MENU SECTION */}
       <ScrollView style={{ flex: 1 }}>
         <MenuList menus={menus} onSelect={addItem} />
       </ScrollView>
 
-      {/* ORDER SECTION (scrollable) */}
+      {/* ORDER SECTION */}
       <ScrollView
-        ref={orderScrollRef}        // 🔥 enable auto-scroll
+        ref={orderScrollRef}
         style={{ flex: 1, backgroundColor: "#fff" }}
       >
         <OrderList
@@ -90,8 +103,9 @@ export default function Vente() {
         />
       </ScrollView>
 
-      {/* FOOTER SECTION */}
+      {/* FOOTER */}
       <OrderFooter total={total} onCommander={commander} />
+
     </View>
   );
 }

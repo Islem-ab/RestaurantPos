@@ -11,7 +11,7 @@ export default function OrderFooter({ total, onCommander }: Props) {
       <Text style={styles.total}>Total: {total} dt</Text>
 
       <TouchableOpacity style={styles.btn} onPress={onCommander}>
-        <Text style={styles.btnText}>Commander</Text>
+        <Text style={styles.btnText}>Enregistrer</Text> 
       </TouchableOpacity>
     </View>
   );
