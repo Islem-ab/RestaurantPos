@@ -8,35 +8,47 @@ type Props = {
 export default function OrderFooter({ total, onCommander }: Props) {
   return (
     <View style={styles.footer}>
-      <Text style={styles.total}>Total: {total} dt</Text>
+      
+      <View style={styles.leftArea}>
+        <Text style={styles.total}>Total: {total} dt</Text>
+      </View>
 
       <TouchableOpacity style={styles.btn} onPress={onCommander}>
         <Text style={styles.btnText}>Enregistrer</Text> 
       </TouchableOpacity>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   footer: {
-    padding: 20,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
     backgroundColor: "#fff",
     borderTopWidth: 1,
     borderColor: "#eee",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
+
+  leftArea: {
+    justifyContent: "center",
+  },
+
   total: {
     fontSize: 22,
     fontWeight: "bold",
   },
+
   btn: {
     backgroundColor: "green",
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 10,
   },
+
   btnText: {
     color: "#fff",
     fontSize: 18,
