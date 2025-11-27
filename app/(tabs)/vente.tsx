@@ -10,6 +10,11 @@ export default function Vente() {
   const [menus, setMenus] = useState<MenuItem[]>([]);
   const [order, setOrder] = useState<OrderItem[]>([]);
 
+  function removeItem(id: number) {
+  setOrder(prev => prev.filter(item => item.id !== id));
+}
+
+
   useEffect(() => {
     loadMenus().then(setMenus);
   }, []);
@@ -67,6 +72,7 @@ export default function Vente() {
           order={order}
           onIncrease={(id) => changeQty(id, 1)}
           onDecrease={(id) => changeQty(id, -1)}
+          onRemove={removeItem}
         />
       </ScrollView>
 

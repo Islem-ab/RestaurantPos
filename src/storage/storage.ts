@@ -51,3 +51,14 @@ export async function deleteOrder(id: number) {
   const filtered = all.filter(o => o.id !== id);
   await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
 }
+
+export async function loadOrderById(id: number): Promise<Order | null> {
+  const all = await loadHistory();
+  return all.find(o => o.id === id) || null;
+}
+
+export async function updateOrder(updated: Order) {
+  const all = await loadHistory();
+  const newList = all.map(o => (o.id === updated.id ? updated : o));
+  await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(newList));
+}

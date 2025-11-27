@@ -1,23 +1,21 @@
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { deleteOrder, loadHistory, Order } from "../../src/storage/storage";
 
 export default function Historique() {
+  const router = useRouter();
   const [history, setHistory] = useState<Order[]>([]);
 
-  // Always load from storage
   async function refresh() {
     const data = await loadHistory();
-    setHistory(data.reverse()); // newest first
+    setHistory(data.reverse());
   }
 
-  // Load once on mount
   useEffect(() => {
     refresh();
   }, []);
 
-  // Reload every time screen becomes active
   useFocusEffect(
     useCallback(() => {
       refresh();
@@ -39,7 +37,7 @@ export default function Historique() {
         </Text>
       )}
 
-      {history.map(order => (
+      {history.map((order) => (
         <View
           key={order.id}
           style={{
@@ -57,11 +55,8 @@ export default function Historique() {
             {order.date}
           </Text>
 
-          {order.items.map(i => (
-            <Text
-              key={`${order.id}-${i.id}`} // FIXED key collision
-              style={{ fontSize: 16 }}
-            >
+          {order.items.map((i) => (
+            <Text key={`${order.id}-${i.id}`} style={{ fontSize: 16 }}>
               • {i.name} × {i.qty} ({i.price * i.qty} dt)
             </Text>
           ))}
@@ -78,6 +73,7 @@ export default function Historique() {
           </Text>
 
           <View style={{ flexDirection: "row", marginTop: 12, gap: 10 }}>
+            {/* DELETE */}
             <TouchableOpacity
               style={{
                 flex: 1,
@@ -87,20 +83,15 @@ export default function Historique() {
               }}
               onPress={async () => {
                 await deleteOrder(order.id);
-                refresh(); // immediate refresh
+                refresh();
               }}
             >
-              <Text
-                style={{
-                  color: "#fff",
-                  fontWeight: "600",
-                  textAlign: "center",
-                }}
-              >
+              <Text style={{ color: "#fff", fontWeight: "600", textAlign: "center" }}>
                 Supprimer
               </Text>
             </TouchableOpacity>
 
+            {/* MODIFY */}
             <TouchableOpacity
               style={{
                 flex: 1,
@@ -108,15 +99,9 @@ export default function Historique() {
                 padding: 12,
                 borderRadius: 8,
               }}
-              onPress={() => alert("Modifier bientôt disponible")}
+              onPress={() => router.push(`/(tabs)/modifier/${order.id}`)}
             >
-              <Text
-                style={{
-                  color: "#fff",
-                  fontWeight: "600",
-                  textAlign: "center",
-                }}
-              >
+              <Text style={{ color: "#fff", fontWeight: "600", textAlign: "center" }}>
                 Modifier
               </Text>
             </TouchableOpacity>
