@@ -28,13 +28,21 @@ export const defaultMenus: MenuItem[] = [
   { id: 6, name: "Salad", price: 9, image: require("../../assets/images/salad.png") },
 ];
 
-export async function loadMenus() {
+// ---------------------------
+// MENU FUNCTIONS
+// ---------------------------
+export async function loadMenus(): Promise<MenuItem[]> {
   const saved = await AsyncStorage.getItem(MENUS_KEY);
+
   if (saved) return JSON.parse(saved);
+
   await AsyncStorage.setItem(MENUS_KEY, JSON.stringify(defaultMenus));
   return defaultMenus;
 }
 
+// ---------------------------
+// ORDER HISTORY FUNCTIONS
+// ---------------------------
 export async function loadHistory(): Promise<Order[]> {
   const saved = await AsyncStorage.getItem(HISTORY_KEY);
   return saved ? JSON.parse(saved) : [];
@@ -52,6 +60,9 @@ export async function deleteOrder(id: number) {
   await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
 }
 
+// ---------------------------
+// ORDER MODIFICATION FUNCTIONS
+// ---------------------------
 export async function loadOrderById(id: number): Promise<Order | null> {
   const all = await loadHistory();
   return all.find(o => o.id === id) || null;

@@ -9,7 +9,7 @@ export default function Historique() {
 
   async function refresh() {
     const data = await loadHistory();
-    setHistory(data.reverse());
+    setHistory([...data].reverse());   // 🔥 FIX : NEVER MUTATE STORAGE ARRAY
   }
 
   useEffect(() => {
@@ -25,21 +25,13 @@ export default function Historique() {
   return (
     <ScrollView style={{ padding: 20, backgroundColor: "#f5f5f5" }}>
       {history.length === 0 && (
-        <Text
-          style={{
-            marginTop: 40,
-            textAlign: "center",
-            color: "#888",
-            fontSize: 18,
-          }}
-        >
+        <Text style={{ marginTop: 40, textAlign: "center", color: "#888", fontSize: 18 }}>
           Aucune commande pour le moment.
         </Text>
       )}
 
       {history.map((order) => (
-        <View
-          key={order.id}
+        <View key={order.id}
           style={{
             backgroundColor: "#fff",
             padding: 18,
@@ -61,18 +53,12 @@ export default function Historique() {
             </Text>
           ))}
 
-          <Text
-            style={{
-              marginTop: 10,
-              fontSize: 18,
-              fontWeight: "700",
-              color: "green",
-            }}
-          >
+          <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "700", color: "green" }}>
             Total: {order.total} dt
           </Text>
 
           <View style={{ flexDirection: "row", marginTop: 12, gap: 10 }}>
+            
             {/* DELETE */}
             <TouchableOpacity
               style={{

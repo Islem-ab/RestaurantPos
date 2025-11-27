@@ -5,15 +5,14 @@ type Props = {
   order: OrderItem[];
   onIncrease: (id: number) => void;
   onDecrease: (id: number) => void;
-  onRemove: (id: number) => void; // NEW
+  onRemove: (id: number) => void;
 };
 
 export default function OrderList({ order, onIncrease, onDecrease, onRemove }: Props) {
   return (
     <View style={{ padding: 10 }}>
-      {order.map((item) => (
-        <View key={item.id} style={styles.row}>
-
+      {order.map((item, index) => (
+        <View key={`${item.id}-${index}`} style={styles.row}>
           {/* NAME */}
           <Text style={styles.name}>
             {item.name} x{item.qty}
@@ -29,7 +28,7 @@ export default function OrderList({ order, onIncrease, onDecrease, onRemove }: P
               <Text style={styles.btnText}>+</Text>
             </TouchableOpacity>
 
-            {/* ❌ REMOVE BUTTON */}
+            {/* DELETE */}
             <TouchableOpacity style={styles.deleteBtn} onPress={() => onRemove(item.id)}>
               <Text style={styles.deleteText}>X</Text>
             </TouchableOpacity>
@@ -79,8 +78,6 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 18,
   },
-
-  // ❌ DELETE BUTTON
   deleteBtn: {
     backgroundColor: "red",
     paddingHorizontal: 10,
