@@ -1,50 +1,128 @@
-# Welcome to your Expo app 👋
+# 🍕 Restaurant POS System
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern Point of Sale system for restaurants built with React Native (Expo) and Node.js.
 
-## Get started
+![Demo](demo.gif)
 
-1. Install dependencies
+## 🛠️ Tech Stack
 
-   ```bash
-   npm install
-   ```
+### Frontend
+- **React Native** with Expo
+- **TypeScript**
+- **Expo Router** for navigation
+- **AsyncStorage** for local data persistence
 
-2. Start the app
+### Backend
+- **Node.js** with Express
+- **MySQL** database
+- **RESTful API**
 
-   ```bash
-   npx expo start
-   ```
+## ✨ Features
 
-In the output, you'll find options to open the app in a
+- 📱 Create and manage orders
+- 🔄 Real-time order tracking
+- 📊 Order history with filtering
+- ✏️ Edit existing orders
+- 🖨️ Generate PDF receipts
+- 🗂️ Category-based menu filtering
+- 💾 Local data storage
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🚀 Quick Start
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Prerequisites
+- Node.js installed
+- MySQL installed and running
+- Expo CLI (`npm install -g expo-cli`)
 
-## Get a fresh project
+### Backend Setup
 
-When you're ready, run:
-
+1. **Create database**:
 ```bash
-npm run reset-project
+mysql -u root -p
+source backend/database.sql
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. **Install dependencies**:
+```bash
+cd backend
+npm install
+```
 
-## Learn more
+3. **Start server**:
+```bash
+npm start
+```
+Backend runs on `http://localhost:3000`
 
-To learn more about developing your project with Expo, look at the following resources:
+### Frontend Setup
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. **Install dependencies**:
+```bash
+cd frontend
+npm install
+npx expo install expo-sharing
+```
 
-## Join the community
+2. **Start app**:
+```bash
+npx expo start
+```
 
-Join our community of developers creating universal apps.
+3. **Run on device**:
+- Press `a` for Android
+- Press `i` for iOS
+- Scan QR code with Expo Go app
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 📁 Project Structure
+
+```
+Caisseresto/
+├── backend/
+│   ├── server.js          # Express server
+│   ├── db.js              # MySQL connection
+│   ├── database.sql       # Database schema
+│   └── routes/
+│       ├── menus.js       # Menu API endpoints
+│       └── orders.js      # Orders API endpoints
+│
+└── frontend/
+    ├── app/(tabs)/        # App screens
+    └── src/
+        ├── components/    # Reusable components
+        ├── storage/       # Local storage logic
+        └── utils/         # Helper functions
+```
+
+## 🔌 API Endpoints
+
+### Menus
+- `GET /api/menus` - Get all menu items
+- `POST /api/menus` - Create menu item
+- `PUT /api/menus/:id` - Update menu item
+- `DELETE /api/menus/:id` - Delete menu item
+
+### Orders
+- `GET /api/orders` - Get all orders
+- `GET /api/orders/:id` - Get single order
+- `POST /api/orders` - Create new order
+- `PUT /api/orders/:id` - Update order
+- `DELETE /api/orders/:id` - Delete order
+
+## 💾 Database Schema
+
+**Tables:**
+- `menus` - Menu items (id, name, price, category, image)
+- `orders` - Orders (id, date, total)
+- `order_items` - Order details (order_id, menu_item_id, name, price, quantity)
+
+## 📝 License
+
+MIT
+
+## 👤 Author
+
+Islem-Ab
+
+---
+
+Made with ❤️ for restaurants
