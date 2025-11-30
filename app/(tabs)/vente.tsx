@@ -26,36 +26,48 @@ export default function Vente() {
     loadMenus().then(setMenus);
   }, []);
 
+  // Fixed filter logic
   const filteredMenus =
-    category === "tous" ? menus : menus.filter((m) => m.category === category);
+    category === "tous" 
+      ? menus 
+      : menus.filter((m) => m.category?.toLowerCase() === category.toLowerCase());
 
   function addItem(item: MenuItem) {
     setOrder((prev) => {
       const found = prev.find((p) => p.id === item.id);
-      if (found)
+      if (found) {
         return prev.map((p) =>
           p.id === item.id ? { ...p, qty: p.qty + 1 } : p
         );
+      }
       return [...prev, { ...item, qty: 1 }];
     });
 
     setTimeout(() => {
       orderScrollRef.current?.scrollToEnd({ animated: true });
-    }, 50);
+    }, 100);
 
-    toastSuccess("Article ajouté !");
+    toastSuccess(`${item.name} ajouté !`);
   }
 
   function removeItem(id: number) {
+    const removed = order.find(i => i.id === id);
     setOrder((prev) => prev.filter((i) => i.id !== id));
+    if (removed) {
+      toastSuccess(`${removed.name} retiré`);
+    }
   }
 
   function changeQty(id: number, delta: number) {
     setOrder((prev) =>
       prev
-        .map((p) =>
-          p.id === id ? { ...p, qty: Math.max(1, p.qty + delta) } : p
-        )
+        .map((p) => {
+          if (p.id === id) {
+            const newQty = Math.max(1, p.qty + delta);
+            return { ...p, qty: newQty };
+          }
+          return p;
+        })
         .filter((p) => p.qty > 0)
     );
   }
@@ -63,11 +75,18 @@ export default function Vente() {
   const total = order.reduce((s, i) => s + i.price * i.qty, 0);
 
   async function commander() {
-    if (order.length === 0) return;
+    if (order.length === 0) {
+      toastSuccess("Panier vide !");
+      return;
+    }
 
     const newOrder = {
       id: Date.now(),
-      date: new Date().toLocaleString(),
+      date: new Date().toLocaleString("fr-TN", { 
+        timeZone: "Africa/Tunis",
+        dateStyle: "short",
+        timeStyle: "short"
+      }),
       items: order,
       total,
     };
@@ -81,19 +100,19 @@ export default function Vente() {
   return (
     <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
 
-      {/* 10% — categories */}
+      {/* 10% – categories */}
       <View style={{ height: "10%" }}>
         <CategoryBar selected={category} onSelect={setCategory} />
       </View>
 
-      {/* 40% — menus */}
+      {/* 40% – menus */}
       <View style={{ height: "40%" }}>
         <ScrollView>
           <MenuList menus={filteredMenus} onSelect={addItem} />
         </ScrollView>
       </View>
 
-      {/* 40% — order */}
+      {/* 40% – order */}
       <View style={{ height: "40%" }}>
         <ScrollView ref={orderScrollRef} style={{ backgroundColor: "#fff" }}>
           <OrderList
@@ -105,7 +124,7 @@ export default function Vente() {
         </ScrollView>
       </View>
 
-      {/* 10% — footer (fixed height) */}
+      {/* 10% – footer */}
       <View style={{ height: "10%" }}>
         <OrderFooter total={total} onCommander={commander} />
       </View>
